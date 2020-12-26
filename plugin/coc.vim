@@ -1,5 +1,3 @@
-" coc.nvim 的配置, 来自于 https://github.com/neoclide/coc.nvim
-
 " Use <c-space> for trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
 
@@ -11,9 +9,6 @@ set nowritebackup
 
 " 使用 Microsoft Python Language Server 不然 coc.nvim 会警告
 call coc#config("python.jediEnabled", v:false)
-
-call coc#config("smartf.wordJump", v:false)
-call coc#config("smartf.jumpOnTrigger", v:false)
 
 " https://rust-analyzer.github.io/manual.html#rust-analyzer-language-server-binary
 call coc#config("rust-analyzer.serverPath", "~/.cargo/bin/rust-analyzer")
@@ -29,7 +24,7 @@ call coc#config('coc.preferences', {
 call coc#config("languageserver", {
       \"ccls": {
       \  "command": "ccls",
-      \  "filetypes": ["c", "cpp"],
+      \  "filetypes": ["c", "cpp", "cc"],
       \  "rootPatterns": ["compile_commands.json", ".svn/", ".git/"],
       \  "index": {
       \     "threads": 8
@@ -43,6 +38,14 @@ call coc#config("languageserver", {
       \  "client": {
       \    "snippetSupport": v:true
       \   }
+      \},
+      \"golang": {
+      \      "command": "gopls",
+      \      "rootPatterns": ["go.mod", ".vim/", ".git/", ".svn/"],
+      \      "filetypes": ["go"],
+      \      "initializationOptions": {
+      \        "usePlaceholders": "true"
+      \      }
       \},
       \"bash": {
       \  "command": "bash-language-server",
@@ -66,9 +69,9 @@ let s:coc_extensions = [
       \ 'coc-vimlsp',
       \ 'coc-ci',
       \ 'coc-snippets',
+      \ 'coc-tsserver',
       \ 'coc-vimtex',
-      \ 'coc-smartf',
-      \ 'coc-go',
+      \ 'coc-todolist',
 			\]
 for extension in s:coc_extensions
 	call coc#add_extension(extension)
@@ -79,6 +82,9 @@ inoremap <silent><expr> <TAB>
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+inoremap { {}<ESC>i
+inoremap {<CR> {<CR>}<ESC>O
 
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -99,6 +105,8 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+" Remap for rename current word
+nmap <silent>gn <Plug>(coc-rename)
 
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -116,8 +124,6 @@ set updatetime=300
 autocmd CursorHold * silent call CocActionAsync('highlight')
 autocmd CursorHoldI * sil call CocActionAsync('showSignatureHelp')
 
-" Remap for rename current word
-nmap <leader>rn <Plug>(coc-rename)
 
 " 注释掉，一般使用 `Space` `r` `f` 直接格式化整个文件
 " Remap for format selected region
@@ -149,7 +155,7 @@ call SpaceVim#custom#SPC('nnoremap', ['r', 'f'], "call CocAction('format')", 'fo
 command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
 " auto import for go on save
-" autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " 这个和 SpaceVim 的 statusline/tabline 冲突了
 " Add diagnostic info for https://github.com/itchyny/lightline.vim
@@ -170,9 +176,6 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 nnoremap <silent> <leader>d  :<C-u>CocList diagnostics<cr>
 
 
-" 下面是 ccls 提供的 LSP Extension
-" https://github.com/MaskRay/ccls/wiki/coc.nvim
-
 " Manage extensions
 " nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
 " Show commands
@@ -188,35 +191,5 @@ nnoremap <silent> <leader>d  :<C-u>CocList diagnostics<cr>
 " Resume latest coc list
 " nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
-nn <silent> xl :call CocLocations('ccls','$ccls/navigate',{'direction':'D'})<cr>
-nn <silent> xk :call CocLocations('ccls','$ccls/navigate',{'direction':'L'})<cr>
-nn <silent> xj :call CocLocations('ccls','$ccls/navigate',{'direction':'R'})<cr>
-nn <silent> xh :call CocLocations('ccls','$ccls/navigate',{'direction':'U'})<cr>
-
-noremap x <Nop>
-nn <silent> xb :call CocLocations('ccls','$ccls/inheritance')<cr>
-" bases of up to 3 levels
-nn <silent> xb :call CocLocations('ccls','$ccls/inheritance',{'levels':3})<cr>
-" derived
-nn <silent> xd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true})<cr>
-" derived of up to 3 levels
-nn <silent> xD :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':3})<cr>
-
-" caller
-nn <silent> xc :call CocLocations('ccls','$ccls/call')<cr>
-" callee
-nn <silent> xC :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
-
-" $ccls/member
-" member variables / variables in a namespace
-nn <silent> xm :call CocLocations('ccls','$ccls/member')<cr>
-" member functions / functions in a namespace
-nn <silent> xf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
-" nested classes / types in a namespace
-nn <silent> xs :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
-
-nmap <silent> xt <Plug>(coc-type-definition)<cr>
-nn <silent> xv :call CocLocations('ccls','$ccls/vars')<cr>
-nn <silent> xV :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
-
-nn xx x
+" -noremap x <Nop>
+" nn xx x

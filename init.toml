@@ -52,7 +52,7 @@
 [[layers]]
   name = 'tools'
 
-# 禁用 SpaceVim 的 checkers layer, 让 coc.nvim 来管理
+# 禁用 SpaceVim 的 checkers layer
 [[layers]]
   name = "checkers"
   enable = false
@@ -72,9 +72,6 @@
 [[layers]]
   name = "lang#markdown"
 
-[[layers]]
-  name = "lang#latex"
-
 # ----------------- 添加的插件 -------------------------------------------------
 
 # oceanic-next 主题，采用其他的主题可以删除
@@ -86,6 +83,7 @@
 [[custom_plugins]]
   name = 'neoclide/coc.nvim'
   merge = 0
+  build =  'yarn install --frozen-lockfile'
 
 # 主要用于快速搜索 文件, buffer 和 函数
 [[custom_plugins]]
@@ -111,9 +109,19 @@
 [[custom_plugins]]
     name = 'simeji/winresizer'
 
+# 比 nerdcommentary 更好用的注释工具
+[[custom_plugins]]
+    name = 'tpope/vim-commentary'
+
 # 基于lsp的高亮插件
 [[custom_plugins]]
     name = 'jackguo380/vim-lsp-cxx-highlight'
+
+# https://github.com/skywind3000/asyncrun.vim
+# 本插件使用 Vim 8 / NeoVim 的异步机制，让你在后台运行 shell 命令，
+# 并将结果实时显示到 Vim 的 Quickfix 窗口中：
+[[custom_plugins]]
+    name = 'skywind3000/asyncrun.vim'
 
 # 从 http://cplusplus.com/ 和 http://cppreference.com/ 获取文档
 [[custom_plugins]]
@@ -124,6 +132,7 @@
     name = 'rhysd/git-messenger.vim'
     lazy =  1
     on_cmd = 'GitMessenger'
+    on_map = '<Plug>(git-messenger'
 
 # 以悬浮窗口的形式打开终端
 [[custom_plugins]]
@@ -133,11 +142,9 @@
 [[custom_plugins]]
     name = 'google/vim-searchindex.git'
 
+# TODO 更加丝滑的翻页
 [[custom_plugins]]
     name = 'psliwka/vim-smoothie'
 
 [[custom_plugins]]
   name = 'kenn7/vim-arsync'
-
-[[custom_plugins]]
-  name = 'fatih/vim-go'

@@ -1,19 +1,2 @@
-# 自动安装脚本
-- [ ] 利用 qemu 来构建 ci 测试
-- [ ] 提供 tmux 以及 alacritty.yml 配置集成
-  - [ ] alacritty 的安装需要按照其仓库的 ./install.md 的步骤手动编译
-
-
-## alacritty
-
-
-## tmux
-颜色设置: https://github.com/alacritty/alacritty/issues/3347
-
-sec delay : https://github.com/neovim/neovim/issues/2035
-
-tmux 基本 :
-https://arslan.io/2018/02/05/gpu-accelerated-terminal-alacritty/
-
-输入法:
-https://shawn233.github.io/2020/02/15/Fcitx-A-Strange-Bug-and-Its-Fix/
+# Install script
+现在，安装脚本还不成熟，不过其中的内容可以为做参考.

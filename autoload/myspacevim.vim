@@ -11,6 +11,13 @@ func! myspacevim#before() abort
     set foldmethod=syntax
     set nofoldenable
 
+    " 打开导航栏
+    " <F3> 打开文件树
+    nnoremap  <F4>  :call QuickRun()<CR>
+    " <F5> floaterm toggle
+    " <F7> 打开历史记录
+    tnoremap  <Esc>  <C-\><C-n>
+
     " 重新映射 leader 键
     let g:mapleader = ','
     " 重新映射 window 键位
@@ -27,14 +34,17 @@ func! myspacevim#before() abort
 
     let g:table_mode_corner='|'
 
-    " 调节 window 大小
+    " 条件 window 大小的设置
     let g:winresizer_start_key = '<space>wa'
     " If you cancel and quit window resize mode by `q` (keycode 113)
     let g:winresizer_keycode_cancel = 113
 
+    " TODO
+    " spell https://wiki.archlinux.org/index.php/Language_checking
+    
     " 让file tree 显示文件图标，需要 terminal 安装 nerd font
     let g:spacevim_enable_vimfiler_filetypeicon = 1
-    " 让 filetree 显示 git 的状态
+    " 让 filetree 显示 git 的状态，会变得很卡，所以关掉
     " let g:spacevim_enable_vimfiler_gitstatus = 1
 
     " 默认 markdown preview 在切换到其他的 buffer 或者 vim
@@ -44,12 +54,18 @@ func! myspacevim#before() abort
     " 书签选中之后自动关闭 quickfix window
     let g:bookmark_auto_close = 1
 
+    " vista 导航栏
+    let g:vista_echo_cursor_strategy = 'scroll'
+    let g:vista_close_on_jump = 1
+    let g:vista_sidebar_position = "vertical topleft"
+
     " vim-lsp-cxx-highlight 和这个选项存在冲突
     " let g:rainbow_active = 1
     
     " ctrl + ] 查询 cppman
-    " 如果想让该快捷键自动查询 man，将Cppman 替换为 Cppman!
-    autocmd FileType c,cpp noremap <C-]> <Esc>:execute "Cppman " . expand("<cword>")<CR>
+    " 如果想让该快捷键自动查询 man，将Cppman 替换为 Man
+    autocmd FileType c,cpp,cc noremap <C-[> <Esc>:execute "Man " . expand("<cword>")<CR>
+    autocmd FileType c,cpp,cc noremap <C-]> <Esc>:execute "Cppman " . expand("<cword>")<CR>
 
     " 让光标自动进入到popup window 中间
     let g:git_messenger_always_into_popup = v:true
@@ -62,17 +78,28 @@ func! myspacevim#before() abort
     " 关闭所有隐藏设置
 		let g:tex_conceal = ""
 
-    " 实现一键运行各种文件，适合非交互式的，少量的代码，比如 leetcode
+    let g:floaterm_keymap_new    = '<C-n>'
+    let g:floaterm_keymap_next   = '<C-l>'
+    let g:floaterm_keymap_kill   = '<C-i>'
+    " 保证在插入模式<F5>可以 toggle floaterm
+    " 来，提出一个自己的第一个 pull request !
+    inoremap  <silent>   <F5>   :FloatermToggle!<CR>
+    nnoremap  <silent>   <F5>   :FloatermToggle!<CR>
+    tnoremap  <silent>   <F5>   <C-\><C-n>:FloatermToggle!<CR>
+
+    " 实现一键运行
     func! QuickRun()
         exec "w"
         let ext = expand("%:e")
         let file = expand("%")
         if ext ==# "sh"
             exec "!sh %"
+        elseif ext ==# "md"
+            exec "!dos2unix %"
         elseif ext ==# "cpp"
-            exec "!clang++ % -Wall -O3 -g -std=c++17 -o %<.out && ./%<.out"
+            exec "!g++ % -Wall -O0 -g -std=c++11 -pthread -o %<.out && ./%<.out"
         elseif ext ==# "c"
-            exec "!clang % -Wall -g -std=c11 -o %<.out && ./%<.out"
+            exec "!gcc % -Wall -g -std=c11 -o %<.out && ./%<.out"
         elseif ext ==# "java"
             let classPath = expand('%:h')
             let className = expand('%:p:t:r')
@@ -118,51 +145,8 @@ func! myspacevim#before() abort
 endf
 
 func! myspacevim#after() abort
-    " <F3> 打开文件树
-    nnoremap  <F4>  :call QuickRun()<CR>
-    " <F5> floaterm toggle
-    " <F7> 打开历史记录
-    tnoremap  <Esc>  <C-\><C-n>
-
+    " 放到此处用于重写 SpaceVim 映射的 F2
+    nnoremap  <F2>  :Vista!!<CR>
+    let g:vista_default_executive = 'coc'
     map <Tab> :wincmd w<CR>
-
-    " press <esc> to cancel.
-    nmap f <Plug>(coc-smartf-forward)
-    nmap F <Plug>(coc-smartf-backward)
-    nmap ; <Plug>(coc-smartf-repeat)
-    nmap , <Plug>(coc-smartf-repeat-opposite)
-
-    augroup Smartf
-      autocmd User SmartfEnter :hi Conceal ctermfg=220 guifg=pink
-      autocmd User SmartfLeave :hi Conceal ctermfg=239 guifg=#504945
-    augroup end
-
-    inoremap   <silent>   <C-n>     :FloatermNew<CR>
-    nnoremap   <silent>   <C-n>    :FloatermNew<CR>
-    tnoremap   <silent>   <C-n>    <C-\><C-n>:FloatermNew<CR>
-
-    inoremap   <silent>   <C-h>     :FloatermPrev<CR>
-    nnoremap   <silent>   <C-h>    :FloatermPrev<CR>
-    tnoremap   <silent>   <C-h>    <C-\><C-n>:FloatermPrev<CR>
-
-    inoremap   <silent>   <C-l>     :FloatermNext<CR>
-    nnoremap   <silent>   <C-l>    :FloatermNext<CR>
-    tnoremap   <silent>   <C-l>    <C-\><C-n>:FloatermNext<CR>
-
-
-    " 保证在插入模式<F5>可以 toggle floaterm
-    " 来，提出一个自己的第一个 pull request !
-    inoremap  <silent>   <F5>   :FloatermToggle!<CR>
-    nnoremap  <silent>   <F5>   :FloatermToggle!<CR>
-    tnoremap  <silent>   <F5>   <C-\><C-n>:FloatermToggle!<CR>
-
-    " go highlight
-    " https://github.com/neoclide/coc.nvim/issues/472
-    let g:go_list_type="quickfix"
-    let g:go_fmt_command="goimports"
-    let g:go_highlight_types=1
-    let g:go_highlight_fields=1
-    let g:go_highlight_functions=1
-    let g:go_highlight_function_calls=1
-    let g:go_fmt_fail_silently=1
 endf
