@@ -1,3 +1,47 @@
+snippet xldh "#define header" 
+#ifndef _XL_$1_H
+#define 
+
+
+
+#endif // _XL_
+endsnippet
+
+snippet xlds "#define simple" 
+#ifndef $1
+#define 
+
+#endif
+endsnippet
+
+snippet xued "xuel #define" 
+#ifndef XUEL_$1_H
+#define 
+
+#include "noncopyable.h"
+
+namespace xuel
+{
+
+class  : noncopyable
+{
+public:
+
+private:
+};
+
+} // namespace
+
+#endif // XULE_
+endsnippet
+
+snippet xuei "xuel #include"
+#include "$1
+
+using namespace xuel;
+
+endsnippet
+
 snippet /* "comment"
 /**
  * $1

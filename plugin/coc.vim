@@ -24,7 +24,7 @@ call coc#config('coc.preferences', {
 call coc#config("languageserver", {
       \"ccls": {
       \  "command": "ccls",
-      \  "filetypes": ["c", "cpp", "cc"],
+      \  "filetypes": ["c", "cc"],
       \  "rootPatterns": ["compile_commands.json", ".svn/", ".git/"],
       \  "index": {
       \     "threads": 8
